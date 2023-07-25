@@ -1,6 +1,35 @@
+import { createRef, useState } from "react"
 import { Link } from "react-router-dom"
+import clienteAxios from "../config/axios"
+
+import Alerta from "../components/Alerta"
 
 const Registro = () => {
+
+  const nameRef = createRef()
+  const emailRef = createRef()
+  const passwordRef = createRef()
+  const passwordConfirmationRef = createRef()
+  const [errores, setErrores] = useState([])
+
+  const handleSubmit = async e => {
+    e.preventDefault()
+
+    const datos = {
+      name:nameRef.current.value,
+      email:emailRef.current.value,
+      password:passwordRef.current.value,
+      password_confirmation:passwordConfirmationRef.current.value
+    }
+
+    try {
+      const { data } = await clienteAxios.post("/api/registro", datos)
+      console.log(data.token)
+    } catch (error) {
+      setErrores(Object.values(error.response.data.errors))
+    }
+  }
+
   return (
     <>
       <h1
@@ -10,7 +39,11 @@ const Registro = () => {
       <div 
         className="bg-white shadow-md rounded-md mt-10 px-5 py-10"
       >
-        <form>
+        <form
+          onSubmit={ handleSubmit }
+          noValidate
+        >
+          { errores ? errores.map((error,idx) => <Alerta key={idx}>{error}</Alerta>) : null }
           <div
             className="mb-4"
           >
@@ -23,7 +56,8 @@ const Registro = () => {
               type="text" 
               className="mt-2 w-full p-3 bg-gray-50" 
               name="name" 
-              placeholder="Tu Nombre" 
+              placeholder="Tu Nombre"
+              ref={nameRef}
             />
           </div>
           <div 
@@ -39,6 +73,7 @@ const Registro = () => {
               className="mt-2 w-full p-3 bg-gray-50" 
               name="email" 
               placeholder="Tu Email"
+              ref={emailRef}
             />
           </div>
           <div 
@@ -54,6 +89,7 @@ const Registro = () => {
               className="mt-2 w-full p-3 bg-gray-50" 
               name="password" 
               placeholder="Tu Password"
+              ref={passwordRef}
             />
           </div>
           <div 
@@ -69,6 +105,7 @@ const Registro = () => {
               className="mt-2 w-full p-3 bg-gray-50" 
               name="password_confirmation" 
               placeholder="Repetir Password"
+              ref={passwordConfirmationRef}
             />
           </div>
 
