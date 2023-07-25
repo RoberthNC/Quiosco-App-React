@@ -1,6 +1,30 @@
+import { createRef, useState } from "react"
 import { Link } from "react-router-dom"
+import Alerta from "../components/Alerta"
+import { useAuth } from "../hooks/useAuth"
 
 const Login = () => {
+
+  const emailRef = createRef()
+  const passwordRef = createRef()
+  const [errores, setErrores] = useState([])
+  const { login } = useAuth({
+    middleware:"guest",
+    url:"/"
+  })
+
+  const handleSubmit = async e => {
+    e.preventDefault()
+
+    const datos = {
+      email:emailRef.current.value,
+      password:passwordRef.current.value,
+    }
+
+    login(datos, setErrores)
+
+  }
+
   return (
     <>
       <h1
@@ -10,7 +34,11 @@ const Login = () => {
       <div 
         className="bg-white shadow-md rounded-md mt-10 px-5 py-10"
       >
-        <form>
+        <form
+          onSubmit={ handleSubmit }
+          noValidate
+        >
+          { errores ? errores.map((error,idx) => <Alerta key={idx}>{error}</Alerta>) : null }
           <div 
             className="mb-4"
           >
@@ -24,6 +52,7 @@ const Login = () => {
               className="mt-2 w-full p-3 bg-gray-50" 
               name="email" 
               placeholder="Tu Email"
+              ref={emailRef}
             />
           </div>
           <div 
@@ -39,6 +68,7 @@ const Login = () => {
               className="mt-2 w-full p-3 bg-gray-50" 
               name="password" 
               placeholder="Tu Password"
+              ref={passwordRef}
             />
           </div>
 
