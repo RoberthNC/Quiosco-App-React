@@ -24,7 +24,7 @@ Modal.setAppElement("#root")
 
 const Layout = () => {
 
-  const { user, error } = useAuth({
+  useAuth({
     middleware:"auth"
   })
   const { modal } = useQuiosco()
